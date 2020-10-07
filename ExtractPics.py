@@ -63,7 +63,7 @@ framerate = args.fr
 freq = args.freq
 timestamp = 0
 cap = cv2.VideoCapture(filename)
-directory = "{}".format(filename.split(".")[0])
+directory = "{}".format(".".join(filename.split(".")[:-1]))
 os.makedirs(directory, exist_ok=True)
 
 while cap.isOpened():
