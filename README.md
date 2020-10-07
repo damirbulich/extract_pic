@@ -11,5 +11,5 @@ pip install opencv-python
 ## Usage help
 
 ```
-python3 ExtractPics.py --help
+python ExtractPics.py --help
 ```

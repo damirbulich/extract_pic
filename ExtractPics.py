@@ -38,7 +38,7 @@ parser.add_argument(
     "--end",
     type=str,
     default="999999:00",
-    help="when to stop extracting images [0:00]]",
+    help="when to stop extracting images [0:00]",
 )
 parser.add_argument("--fr", type=int, default=24, help="framerate of video")
 parser.add_argument(
