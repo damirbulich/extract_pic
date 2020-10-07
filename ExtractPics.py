@@ -2,7 +2,7 @@ import cv2
 import os
 from math import floor
 import argparse as arg
-import platform
+import sys
 
 
 class Timestamp:
@@ -73,6 +73,7 @@ while cap.isOpened():
         name = os.path.join(
             directory, "capture_{}.jpg".format(str(Timestamp(timestamp)))
         )
+        sys.stdout.write("\r" + "Loading" + "." * 100 * (end // timestamp))
         if not cv2.imwrite(name, frame):
             raise Exception("Could not write image")
     timestamp += 1
