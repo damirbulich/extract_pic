@@ -6,21 +6,22 @@ import sys
 
 
 class Timestamp:
-    def __init__(self, n):
+    def __init__(self, n, fr=30):
         self.n = n
+        self.fr = fr
 
     def __str__(self):
         return "{:02d}-{:02d}-{:02d}".format(
-            (self.n // 24) // 60, (self.n // 24) % 60, self.n % 24
+            (self.n // self.fr) // 60, (self.n // self.fr) % 60, self.n % self.fr
         )
 
     def __int__(self):
         return self.n
 
     @staticmethod
-    def fromTimestamp(timest):
-        n = int(timest.split(":")[0]) * 60 * 24 + int(timest.split(":")[1]) * 24
-        return Timestamp(n)
+    def fromTimestamp(timest, fr=30):
+        n = int(timest.split(":")[0]) * 60 * fr + int(timest.split(":")[1]) * fr
+        return Timestamp(n, fr)
 
 
 parser = arg.ArgumentParser(
@@ -41,7 +42,7 @@ parser.add_argument(
     default="999999:00",
     help="when to stop extracting images [0:00]",
 )
-parser.add_argument("--fr", type=int, default=24, help="framerate of video")
+parser.add_argument("--fr", type=int, default=30, help="framerate of video")
 parser.add_argument(
     "--freq",
     type=float,
@@ -56,11 +57,11 @@ filename = args.filename
 if not os.path.isfile(filename):
     print("\nNo such file exists!\n")
     exit()
-begin = int(Timestamp.fromTimestamp(args.begin))
-# print("begin = {}".format(begin))
-end = int(Timestamp.fromTimestamp(args.end))
-# print("end = {}".format(end))
 framerate = args.fr
+begin = int(Timestamp.fromTimestamp(args.begin, fr=framerate))
+# print("begin = {}".format(begin))
+end = int(Timestamp.fromTimestamp(args.end, fr=framerate))
+# print("end = {}".format(end))
 freq = args.freq
 timestamp = 0
 cap = cv2.VideoCapture(filename)
@@ -71,14 +72,17 @@ while cap.isOpened():
     ret, frame = cap.read()
     if timestamp % floor(framerate / freq) == 0 and timestamp >= begin:
         name = os.path.join(
-            directory, "capture_{}.jpg".format(str(Timestamp(timestamp)))
+            directory, "capture_{}.jpg".format(str(Timestamp(timestamp, fr=framerate)))
         )
-        sys.stdout.write("\r" + "Loading" + "." * 100 * (end // timestamp))
         if not cv2.imwrite(name, frame):
             raise Exception("Could not write image")
+    print(
+        "\r" + "Progress - {}".format(str(Timestamp(timestamp, fr=framerate))), end=""
+    )
     timestamp += 1
     if not ret or timestamp > end:
         break
+print("\r")
 
 print("\nImages saved to folder {}".format(directory))
 print("That's all folks!\n")
