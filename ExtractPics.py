@@ -2,6 +2,7 @@ import cv2
 import os
 from math import floor
 import argparse as arg
+import platform
 
 
 class Timestamp:
@@ -69,7 +70,10 @@ os.makedirs(directory, exist_ok=True)
 while cap.isOpened():
     ret, frame = cap.read()
     if timestamp % floor(framerate / freq) == 0 and timestamp >= begin:
-        name = "{}/capture_{}.jpg".format(directory, str(Timestamp(timestamp)))
+        if platform.system() == "Windows":
+            name = "{}\\capture_{}.jpg".format(directory, str(Timestamp(timestamp)))
+        else:
+            name = "{}/capture_{}.jpg".format(directory, str(Timestamp(timestamp)))
         cv2.imwrite(name, frame)
     timestamp += 1
     if not ret or timestamp > end:
