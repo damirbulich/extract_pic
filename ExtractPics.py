@@ -10,7 +10,7 @@ class Timestamp:
         self.n = n
 
     def __str__(self):
-        return "{:02d}:{:02d}:{:02d}".format(
+        return "{:02d}-{:02d}-{:02d}".format(
             (self.n // 24) // 60, (self.n // 24) % 60, self.n % 24
         )
 
@@ -73,7 +73,8 @@ while cap.isOpened():
         name = os.path.join(
             directory, "capture_{}.jpg".format(str(Timestamp(timestamp)))
         )
-        cv2.imwrite(name, frame)
+        if not cv2.imwrite(name, frame):
+            raise Exception("Could not write image")
     timestamp += 1
     if not ret or timestamp > end:
         break
