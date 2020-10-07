@@ -70,16 +70,15 @@ os.makedirs(directory, exist_ok=True)
 while cap.isOpened():
     ret, frame = cap.read()
     if timestamp % floor(framerate / freq) == 0 and timestamp >= begin:
-        if platform.system() == "Windows":
-            name = "{}\\capture_{}.jpg".format(directory, str(Timestamp(timestamp)))
-        else:
-            name = "{}/capture_{}.jpg".format(directory, str(Timestamp(timestamp)))
+        name = os.path.join(
+            directory, "capture_{}.jpg".format(str(Timestamp(timestamp)))
+        )
         cv2.imwrite(name, frame)
     timestamp += 1
     if not ret or timestamp > end:
         break
 
-print("\nImages saved to folder {}/".format(directory))
+print("\nImages saved to folder {}".format(directory))
 print("That's all folks!\n")
 
 cap.release()
