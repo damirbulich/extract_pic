@@ -10,7 +10,7 @@ class Timestamp:
 
     def __str__(self):
         return "{:02d}:{:02d}:{:02d}".format(
-            (self.n // 24) // 60, self.n // 24, self.n % 24
+            (self.n // 24) // 60, (self.n // 24) % 60, self.n % 24
         )
 
     def __int__(self):
